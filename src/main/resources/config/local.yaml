@@ -1,0 +1,14 @@
+http:
+  host: "localhost"
+  port: "8082"
+  
+request:
+  host: "localhost"
+  port: "8081"
+  path: "/api/accountsPAPI"
+  
+db:
+  URL: "jdbc:postgresql://localhost:5455/postgres"
+  Driver class name: "org.postgresql.Driver"
+  User: "postgres"
+  Password: "postgres"

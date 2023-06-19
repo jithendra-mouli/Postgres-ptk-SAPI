@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="PostData-ImplementationFlow" doc:id="c86f780b-febf-4a58-838e-b09161ff233a" >
+		<http:request method="GET" doc:name="Request" doc:id="676a74a1-8895-4edd-a565-318b776f7e44" config-ref="HTTP_Request_configuration" path="${request.path}" responseTimeout="120000" />
+		<logger level="INFO" doc:name="Logger" doc:id="cc5fd27c-54e4-40d2-8c6a-a8d78abf4382" />
+		<batch:job jobName="PostData-ImplementationBatch_Job" doc:id="eaa17051-8f11-44b5-8e3f-9376c85763d0" blockSize="5">
+			<batch:process-records >
+				<batch:step name="Batch_Step" doc:id="9bf6b390-b695-4d06-be11-e606a72c92fc" >
+					<logger level="INFO" doc:name="Logger" doc:id="1672a759-98c0-4a4a-b674-f3a01b29b71e" />
+					<ee:transform doc:name="Transform Message" doc:id="066db34a-5f38-4ade-aa51-706c0e505c1b" >
+						<ee:message >
+						</ee:message>
+						<ee:variables >
+							<ee:set-variable resource="datavar.dwl" variableName="Data" />
+						</ee:variables>
+					</ee:transform>
+					<db:insert doc:name="Insert" doc:id="a01653fe-8119-4e93-82dd-5fba83954fd0" config-ref="Database_Config">
+						<db:sql ><![CDATA[INSERT INTO accounts_v2(id, account_holder, creation_time)
+VALUES (:id, :first_name, :account_status)]]></db:sql>
+						<db:input-parameters ><![CDATA[#[{
+                "id": vars.Data.id,
+                "first_name": vars.Data.account_holder,
+                "account_status": vars.Data.account_status
+            }]]]></db:input-parameters>
+					</db:insert>
+				</batch:step>
+			</batch:process-records>
+			<batch:on-complete >
+				<logger level="INFO" doc:name="Logger" doc:id="bb797894-bead-482a-9912-b98058523e5b" />
+			</batch:on-complete>
+		</batch:job>
+	</flow>
+</mule>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd 
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd"><http:listener-config name="postgres-ptk-sapi-httpListenerConfig">
+        <http:listener-connection host="${http.host}" port="${http.port}" />
+    </http:listener-config>
+    <apikit:config name="postgres-ptk-sapi-config" api="resource::da462036-712d-4369-9d40-3a91de0bf1b0:postgres-ptk-sapi:1.0.0:raml:zip:postgres-ptk-sapi.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="d407431f-1dbb-4fcc-bca1-484f12bd5e83" >
+		<http:request-connection host="${request.host}" port="${request.port}"/>
+	</http:request-config>
+    <db:config name="Database_Config" doc:name="Database Config" doc:id="64469a03-a581-4d6f-85b1-b552f4ca837a" >
+		<db:generic-connection url="${db.URL}" driverClassName="${db.Driver class name}" user="${db.User}" password="${db.Password}" />
+	</db:config>
+	<configuration-properties doc:name="Configuration properties" doc:id="08aae6c1-49f3-469e-b26a-687946efe916" file="config/${mule.env}.yaml" />
+	<global-property doc:name="Global Property" doc:id="8d322ba1-c843-4292-81c6-6a5858a295f5" name="mule.env" value="local" />
+</mule>
